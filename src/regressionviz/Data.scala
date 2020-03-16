@@ -8,11 +8,22 @@ import scala.io.Source
 
 class Data (val file: String) {
   
-  private var storedData: Option[DenseMatrix] = None
+  private var storedData: Option[DenseMatrix[Double]] = None
   private var dataHeader: Option[Array[String]] = None
   
   // Method calls either loadCSV or loadJSON based on filetype
-  def loadFile = ???
+  def loadFile(file: String) = {
+    // Match to select right filetype
+    
+    if(file.takeRight(3).toLowerCase() == "csv") {
+      val (header, data) = this.loadCSV(file)
+      this.dataHeader = header
+      this.storedData = data
+      
+    }
+    
+    
+  }
   
   private def loadCSV(file: String) = {
     val loader = Source.fromFile(file).getLines()
@@ -41,7 +52,7 @@ class Data (val file: String) {
     
     
     // Returning headers and data in breeze dense matrix
-    (header, data)
+    (Option(header), Option(data))
   }
   
   private def loadJSON = ???
