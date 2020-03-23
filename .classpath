@@ -5,5 +5,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="scalatest_2.12-3.0.4.jar"/>
 	<classpathentry kind="lib" path="breeze_breeze-viz-1.0_2.12.3.jar"/>
+	<classpathentry kind="lib" path="scala-swing_2.12-2.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
