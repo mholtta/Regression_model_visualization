@@ -66,6 +66,7 @@ object GUI extends SimpleSwingApplication {
     val yLimits = new TextField(2)
     
     
+    
     // Adding contents to box
     box.contents += loadData
     box.contents += Swing.VStrut(10)
@@ -74,8 +75,9 @@ object GUI extends SimpleSwingApplication {
     box.contents += Swing.Glue
     box.contents += new Label("Select regression model")
     box.contents += Swing.VStrut(10)
-    box.contents += new BorderPanel {
-      add(modelSelector, BorderPanel.Position.Center)
+    box.contents += new FlowPanel {
+      contents += modelSelector
+      
     }
     
     box.contents += new Label("Set x-min and x-max")
