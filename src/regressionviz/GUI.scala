@@ -2,6 +2,8 @@ package regressionviz
 
 import scala.swing._
 
+import java.awt.Insets
+
 /*
 class UI extends MainFrame {
   title = "GUI Program #3"
@@ -30,6 +32,7 @@ object GUI extends SimpleSwingApplication {
     title     = "Regression model visualization"
     resizable = true
     
+    /*
     val width      = 200
     val height     = 600
     val fullHeight = 810
@@ -40,8 +43,10 @@ object GUI extends SimpleSwingApplication {
     preferredSize = new Dimension(width,fullHeight)
     maximumSize   = new Dimension(width,fullHeight)
     
+    */
+    
     // Creating a Box on left hand side of the window
-    val box = new BoxPanel(Orientation.Vertical)
+    //val box = new BoxPanel(Orientation.Vertical)
     
     
     // Creating buttons to add to box
@@ -63,10 +68,47 @@ object GUI extends SimpleSwingApplication {
     xLimits.contents += xMin
     xLimits.contents += xMax
     
-    val yLimits = new TextField(2)
+    val yLimits = new FlowPanel()
+    val yMin = new TextField(5)
+    val yMax = new TextField(5)
+    yLimits.contents += yMin
+    yLimits.contents += yMax
+    
+    val graph = new TextArea(25,45)
+    graph.text = "Placeholder, graph will replace this"
     
     
+    val panel = new GridBagPanel {
+      def constraints(x: Int, y: Int, gridwidth: Int = 1, gridheight: Int = 1,
+		    weightx: Double = 0.0, weighty: Double = 0.0, fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.Horizontal, 
+		    anchor: GridBagPanel.Anchor.Value = GridBagPanel.Anchor.NorthWest, inset: Insets = new Insets(10,10,0,10)) : Constraints = {
+        val c = new Constraints()
+        c.gridx = x
+        c.gridy = y
+        c.gridwidth = gridwidth
+        c.gridheight = gridheight
+        c.weightx = weightx
+        c.weighty = weighty
+        c.fill = fill
+        c.anchor = anchor
+        c.insets = inset
+        c
+      }
+  
+      add(loadData, constraints(0,0))
+      add(help,constraints(0,1))
+      add(new Label("Select regression model"), constraints(0,2, inset = new Insets(100,10,0,0)))
+      add(modelSelector, constraints(0,3))
+      add(new Label("Set x-min and x-max"), constraints(0,4))
+      add(xLimits, constraints(0,5))
+      add(new Label("Set y-min and y-max"), constraints(0,6))
+      add(yLimits, constraints(0,7))
+      add(graph,constraints(1,0, gridheight = 8))
+      
+    }
     
+    
+    /*
     // Adding contents to box
     box.contents += loadData
     box.contents += Swing.VStrut(10)
@@ -87,12 +129,13 @@ object GUI extends SimpleSwingApplication {
     box.contents += Swing.VStrut(10)
     box.contents += yLimits
     box.border = Swing.EmptyBorder(10, 10, 10, 10)
-    
+    */
     
     visible = true
     
-    contents = box
+    contents = panel
   }
+  
   
   
   
