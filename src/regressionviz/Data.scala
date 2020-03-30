@@ -6,13 +6,13 @@ import breeze.linalg.{DenseMatrix, DenseVector}
 // Importing file reading tools
 import scala.io.Source
 
-class Data (val file: String) {
+class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/programming-studio-2-regression-viz/Test1.csv") {
   
   private var storedData: Option[DenseMatrix[Double]] = None
   private var dataHeader: Option[Array[String]] = None
   
   // Method calls either loadCSV or loadJSON based on filetype
-  def loadFile(file: String) = {
+  def loadFile() = {
     // Match to select right filetype
     
     if(file.takeRight(3).toLowerCase() == "csv") {
@@ -27,11 +27,15 @@ class Data (val file: String) {
   
   private def loadCSV(file: String) = {
     val loader = Source.fromFile(file).getLines()
-    val header = loader.take(1).toString.split(";").map(_.trim)
+    val header = loader
+                       .take(1)
+                       .mkString
+                       .split(";")
+                       .map(_.trim)
     
     // Data from file to array of arrays
     // TODO add try and except here, even if file and data exists, toDouble can cause errors
-    val content = loader.toArray
+    val content = loader.drop(1).toArray
                          .map(_.split(";"))
                          .map(_.map(_.trim))
                          .map(_.map(_.toDouble))
@@ -64,5 +68,7 @@ class Data (val file: String) {
   
   // Returns data header
   def getHeader = this.dataHeader
+  
+  def workingDirectory = new java.io.File(".").getCanonicalPath
   
 }
