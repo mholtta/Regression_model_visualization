@@ -1,4 +1,4 @@
-/*
+
 
 package test
 
@@ -118,5 +118,3 @@ class UnitTest extends FlatSpec {
   val testi =  matcherTest.matchMap
   
 }
-
-*/
