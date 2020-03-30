@@ -11,6 +11,7 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
   private var storedData: Option[DenseMatrix[Double]] = None
   private var dataHeader: Option[Array[String]] = None
   
+  
   // Method calls either loadCSV or loadJSON based on filetype
   def loadFile() = {
     // Match to select right filetype
@@ -19,6 +20,7 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
       val (header, data) = this.loadCSV(file)
       this.dataHeader = header
       this.storedData = data
+      
       
     }
     
@@ -35,7 +37,7 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
     
     // Data from file to array of arrays
     // TODO add try and except here, even if file and data exists, toDouble can cause errors
-    val content = loader.drop(1).toArray
+    val content = loader.toArray
                          .map(_.split(";"))
                          .map(_.map(_.trim))
                          .map(_.map(_.toDouble))
@@ -50,13 +52,13 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
       // TODO raise some exception
     }
     
-    // Creating DenseMatrix
-    val data = new DenseMatrix(lenght, width, content.flatten)
+    // Creating DenseMatrix, needs to be transposed in the end
+    val data = new DenseMatrix(width, lenght, content.flatten)
  
     
     
     // Returning headers and data in breeze dense matrix
-    (Option(header), Option(data))
+    (Option(header), Option(data.t))
   }
   
   private def loadJSON = ???
