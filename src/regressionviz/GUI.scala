@@ -4,6 +4,9 @@ import scala.swing._
 
 import java.awt.Insets
 
+import org.jfree.chart.plot._
+import org.jfree.data.xy._
+
 /*
 class UI extends MainFrame {
   title = "GUI Program #3"
@@ -78,6 +81,22 @@ object GUI extends SimpleSwingApplication {
     graph.text = "Placeholder, graph will replace this"
     
     
+    // Data for plot
+    var data = new Data("Test1.csv")
+    data.loadFile()
+    val x = data.getData.get(::,0).toArray
+    val y = data.getData.get(::,1).toArray
+    
+    // Generating plot
+    val plot = new XYPlot()
+    
+    val collection1 = new DefaultXYDataset
+    
+    collection1.addSeries("Series 1", Array(x,y))
+    
+    
+    
+    // Combining all items to GridBagPanel
     val panel = new GridBagPanel {
       def constraints(x: Int, y: Int, gridwidth: Int = 1, gridheight: Int = 1,
 		    weightx: Double = 0.0, weighty: Double = 0.0, fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.Horizontal, 
