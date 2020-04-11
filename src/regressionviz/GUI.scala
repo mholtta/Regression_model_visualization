@@ -6,6 +6,10 @@ import java.awt.Insets
 
 import org.jfree.chart.plot._
 import org.jfree.data.xy._
+import org.jfree.chart.renderer.xy._
+import org.jfree.chart.axis._
+import org.jfree.chart._
+
 
 /*
 class UI extends MainFrame {
@@ -90,9 +94,48 @@ object GUI extends SimpleSwingApplication {
     // Generating plot
     val plot = new XYPlot()
     
+    
+    
+    // Create the scatter data, renderer, and axis
     val collection1 = new DefaultXYDataset
     
     collection1.addSeries("Series 1", Array(x,y))
+    val renderer1 = new XYLineAndShapeRenderer(false, true) // Shapes only
+    val domain1 = new NumberAxis("Domain1")
+    val range1 = new NumberAxis("Range1")
+    
+    // Set the scatter data, renderer, and axis into plot
+    plot.setDataset(0, collection1);
+    plot.setRenderer(0, renderer1)
+    plot.setDomainAxis(0, domain1)
+    plot.setRangeAxis(0, range1)
+    
+    // Map the scatter to the first Domain and first Range
+    plot.mapDatasetToDomainAxis(0, 0)
+    plot.mapDatasetToRangeAxis(0, 0)
+    
+    /* SETUP LINE */
+
+    // Create the line data, renderer, and axis
+    val collection2 = new DefaultXYDataset
+    collection2.addSeries("Series 2", Array(y,x))
+    
+    val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
+    val domain2 = new NumberAxis("Domain2")
+    val range2 = new NumberAxis("Range2")
+    
+    // Set the line data, renderer, and axis into plot
+    plot.setDataset(1, collection2);
+    plot.setRenderer(1, renderer2);
+    plot.setDomainAxis(1, domain2);
+    plot.setRangeAxis(1, range2);
+    
+    // Map the line to the second Domain and second Range
+    plot.mapDatasetToDomainAxis(1, 1);
+    plot.mapDatasetToRangeAxis(1, 1);
+    
+    // Create the chart with the plot and a legend
+    val chart = new JFreeChart("Multi Dataset Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
     
     
     
