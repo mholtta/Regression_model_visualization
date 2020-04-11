@@ -135,7 +135,10 @@ object GUI extends SimpleSwingApplication {
     plot.mapDatasetToRangeAxis(1, 1);
     
     // Create the chart with the plot and a legend
-    val chart = new JFreeChart("Multi Dataset Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+    val chart = new JFreeChart("Multi Dataset Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, true)
+    
+    // Warpping the chart to scala swing component
+    val wrappedChart = Component.wrap(new ChartPanel(chart))
     
     
     
@@ -165,7 +168,7 @@ object GUI extends SimpleSwingApplication {
       add(xLimits, constraints(0,5))
       add(new Label("Set y-min and y-max"), constraints(0,6))
       add(yLimits, constraints(0,7))
-      add(graph,constraints(1,0, gridheight = 8))
+      add(wrappedChart,constraints(1,0, gridheight = 8))
       
     }
     
