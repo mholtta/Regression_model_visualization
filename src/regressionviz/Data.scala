@@ -63,6 +63,9 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
   
   private def loadJSON = ???
   
+  def fitModel() = {
+    
+  }
   
   
   // Returns the data loaded
