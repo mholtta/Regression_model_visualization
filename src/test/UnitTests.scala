@@ -35,6 +35,20 @@ class UnitTest extends FlatSpec {
     
   }
   
+  def assertCloseEnoughDV(message: String, valueA: DenseVector[Double], valueB: DenseVector[Double], threshold: Double) = {
+    // Elementwise difference
+    val difference = valueA - valueB
+    
+    // Absolute values of all difference
+    difference.map(scala.math.abs(_))
+    
+    // Comparison that difference below threshold
+    val result = breeze.linalg.all(difference <:< threshold)
+    
+    assert(result, message)
+  }
+  
+  
   
   
   /*
@@ -55,7 +69,7 @@ class UnitTest extends FlatSpec {
   
   val xCSV2 = DenseVector(-30.0,-25.0,-20.0,-15.0,-10.0,-5.0,0.0,5.0,10.0,15.0,20.0,25.0,30.0)
   val yCSV2 = DenseVector(133114.0,76804.0,39144.0,16384.0,4774.0,564.0,4.0,-656.0,-5166.0,-17276.0,-40736.0,-79296.0,-136706.0)
-  val model = DenseVector(4.0,3.0,-2.0,-5.0)
+  val coefficientsCSV2 = DenseVector(4.0,3.0,-2.0,-5.0)
   val CSV2matrix = DenseMatrix.zeros[Double](xCSV2.length,2)
   CSV2matrix(::,0) := xCSV2
   CSV2matrix(::,1) := yCSV2
@@ -83,6 +97,20 @@ class UnitTest extends FlatSpec {
   "RegressionTest header and data after loading data" should "match to test values" in { 
     assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", data2.getHeader, header2)
     assertEqualsOptions(s"The data should be $CSV2matrix before data is loaded into data1 instance.", regressionTest.getData, Option(CSV2matrix))
+  }
+  
+    
+  /*
+   * RegressionModel object, 3rd degree polynomial.
+   */
+  
+  val model = new RegressionModel(regressionTest.getData.get,3)
+  
+  
+  
+  "Regression model estimated from CSV2" should "be close enough to test values (threshold 0.000000001)" in { 
+    assertCloseEnoughDV(s"The model coefficients should be $coefficientsCSV2.", model.getCoefficients, coefficientsCSV2,0.000000001)
+    
   }
   
   
