@@ -1,6 +1,7 @@
 package regressionviz
 
 import scala.swing._
+import scala.swing.event.ButtonClicked
 
 import java.awt.Insets
 
@@ -9,6 +10,8 @@ import org.jfree.data.xy._
 import org.jfree.chart.renderer.xy._
 import org.jfree.chart.axis._
 import org.jfree.chart._
+
+import java.io.File
 
 
 /*
@@ -35,6 +38,19 @@ object GuiProgramThree {
 
 object GUI extends SimpleSwingApplication {
   
+  def choosePlainFile(title: String = ""): Option[File] = {  
+    val chooser = new FileChooser(new File("."))
+    chooser.title = title
+    val result = chooser.showOpenDialog(null)
+    if (result == FileChooser.Result.Approve) {
+      println("Approve -- " + chooser.selectedFile)
+      Some(chooser.selectedFile)
+    } else None
+  }
+  
+  
+  
+  
   def top = new MainFrame {
     title     = "Regression model visualization"
     resizable = true
@@ -59,6 +75,11 @@ object GUI extends SimpleSwingApplication {
     // Creating buttons to add to box
     val loadData = new Button("Load data")
     loadData.border = Swing.BeveledBorder(Swing.Raised)
+    
+    listenTo(loadData)
+    reactions += {
+      case ButtonClicked(b) if b == loadData => choosePlainFile()
+    }
     
     
     val help = new Button("Help")
@@ -86,12 +107,12 @@ object GUI extends SimpleSwingApplication {
     
     
     // Data for plot
-    var data = new Data("Test1.csv")
+    var data = new Data("Test2_third_power.csv")
     data.loadFile()
     val x = data.getData.get(::,0).toArray
     val y = data.getData.get(::,1).toArray
     
-    val regressionModel = new RegressionModel(data.getData.get,1)
+    val regressionModel = new RegressionModel(data.getData.get,3)
     val predictions = regressionModel.getPredictions
     
     val xPred = predictions(::,0).toArray
