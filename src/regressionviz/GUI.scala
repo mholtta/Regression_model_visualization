@@ -91,6 +91,12 @@ object GUI extends SimpleSwingApplication {
     val x = data.getData.get(::,0).toArray
     val y = data.getData.get(::,1).toArray
     
+    val regressionModel = new RegressionModel(data.getData.get,1)
+    val predictions = regressionModel.getPredictions
+    
+    val xPred = predictions(::,0).toArray
+    val yPred = predictions(::,1).toArray
+    
     // Generating plot
     val plot = new XYPlot()
     
@@ -120,7 +126,7 @@ object GUI extends SimpleSwingApplication {
 
     // Create the line data, renderer, and axis
     val collection2 = new DefaultXYDataset
-    collection2.addSeries("Series 2", Array(y,x))
+    collection2.addSeries("Series 2", Array(xPred,yPred))
     
     val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
     val domain2 = new NumberAxis("Domain2")

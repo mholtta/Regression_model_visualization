@@ -1,6 +1,6 @@
 package regressionviz
 
-import breeze.linalg.{DenseMatrix, DenseVector, max, linspace}
+import breeze.linalg.{DenseMatrix, DenseVector, max, linspace, inv}
 
 import breeze.linalg.NumericOps._
 
@@ -29,7 +29,7 @@ class RegressionModel(inputData: DenseMatrix[Double], private val polynomial: In
   // Private method for fitting model
   private def fitModel = {
     val X = this.exponentiate(x, polynomial)
-    val coefficients = X \ y
+    val coefficients = inv(X.t * X) * X.t * y
     
     coefficients
     
