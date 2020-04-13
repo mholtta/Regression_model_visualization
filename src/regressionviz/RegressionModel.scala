@@ -14,12 +14,17 @@ class RegressionModel(inputData: DenseMatrix[Double], private val polynomial: In
   private val maxValue = max(x)
   private val minValue = x.toArray.min
   
-  // Linearly spaced DenseVector to for showing predictions line
-  private val predictSpace = linspace(minValue,maxValue)
-  
   
   // Fitted model coefficients
   private val modelCoefficients = fitModel
+  
+  // Linearly spaced DenseVector to for showing predictions line
+  private val predictSpace = linspace(minValue,maxValue)
+  
+  // Predictions
+  private val predictions = this.predict(predictSpace, modelCoefficients)
+  
+  
   
   // Private method for fitting model
   private def fitModel = {
@@ -45,15 +50,23 @@ class RegressionModel(inputData: DenseMatrix[Double], private val polynomial: In
   // Private method for generating predictions
   private def predict(x: DenseVector[Double], coefficients: DenseVector[Double]) = {
     val X = exponentiate(x, polynomial)
-    val result = DenseVector[Double].ones(x.length)
+    val result = DenseVector.ones[Double](x.length)
     
+    // Dot product for each row of X
     for(i <- 0 until x.length) {
       result(i) = X(i,::) * coefficients
     }
     
-    // Mapping each row as a dot product of row and coefficients
-    val result = X(*,::).map(dv => dv * coefficients)
+    result
   }
   
+  // Returning predictions as DenseMatrix
+  def getPredictions = {
+    val returnval = DenseMatrix.zeros[Double](predictSpace.length, 2)
+    returnval(::,0) := predictSpace
+    returnval(::,1) := predictions
+    
+    returnval
+  }
   
 }
