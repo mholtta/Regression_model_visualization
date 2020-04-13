@@ -4,7 +4,7 @@ package test
 
 import org.scalatest._
 import regressionviz._
-import breeze.linalg.DenseMatrix
+import breeze.linalg.{DenseMatrix, DenseVector}
 
 
 class UnitTest extends FlatSpec {
@@ -35,15 +35,15 @@ class UnitTest extends FlatSpec {
     
   }
   
-  /*
-   * Person objects for testing.
-   */
   
   
   /*
    * Data object.
    */
-  val data1 = new Data("Test1.csv")  
+  val data1 = new Data("Test1.csv") 
+  
+  val regressionTest = new Data("Test2_third_power.csv") // For testing regression model class
+  
   /*
    * Target results.
    */
@@ -52,6 +52,13 @@ class UnitTest extends FlatSpec {
   val denseMatrix2 = Option(DenseMatrix((1.0,2.0),(2.0,4.0),(3.0,6.0)))
   val header2 = Option(Array("X","Y"))
   
+  
+  val xCSV2 = DenseVector(-30.0,-25.0,-20.0,-15.0,-10.0,-5.0,0.0,5.0,10.0,15.0,20.0,25.0,30.0)
+  val yCSV2 = DenseVector(133114.0,76804.0,39144.0,16384.0,4774.0,564.0,4.0,-656.0,-5166.0,-17276.0,-40736.0,-79296.0,-136706.0)
+  val model = DenseVector(4.0,3.0,-2.0,-5.0)
+  val CSV2matrix = DenseMatrix.zeros[Double](xCSV2.length,2)
+  CSV2matrix(::,0) := xCSV2
+  CSV2matrix(::,1) := yCSV2
   
   
   
@@ -71,7 +78,12 @@ class UnitTest extends FlatSpec {
     assertEqualsOptions(s"The data should be $denseMatrix2 before data is loaded into data1 instance.", data2.getData, denseMatrix2)
   }  
   
+  regressionTest.loadFile()
   
+  "RegressionTest header and data after loading data" should "match to test values" in { 
+    assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", data2.getHeader, header2)
+    assertEqualsOptions(s"The data should be $CSV2matrix before data is loaded into data1 instance.", regressionTest.getData, Option(CSV2matrix))
+  }
   
   
 }

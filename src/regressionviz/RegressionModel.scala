@@ -40,15 +40,15 @@ class RegressionModel(inputData: DenseMatrix[Double], private val polynomial: In
     val matrix = DenseMatrix.zeros[Double](data.length, exponential +1)
 
        // Adding powers of x to original
-    for(p <- 0 to polynomial) {
+    for(p <- 0 to exponential) {
       val power = data ^:^ p.toDouble
       matrix(::,p) := power
     }
     matrix
   }
   
-  // Private method for generating predictions
-  private def predict(x: DenseVector[Double], coefficients: DenseVector[Double]) = {
+  // Method for generating predictions
+  def predict(x: DenseVector[Double], coefficients: DenseVector[Double]) = {
     val X = exponentiate(x, polynomial)
     val result = DenseVector.ones[Double](x.length)
     
@@ -60,7 +60,7 @@ class RegressionModel(inputData: DenseMatrix[Double], private val polynomial: In
     result
   }
   
-  // Returning predictions as DenseMatrix
+  // Returning predictions as DenseMatrix for visualization
   def getPredictions = {
     val returnval = DenseMatrix.zeros[Double](predictSpace.length, 2)
     returnval(::,0) := predictSpace
@@ -68,5 +68,8 @@ class RegressionModel(inputData: DenseMatrix[Double], private val polynomial: In
     
     returnval
   }
+  
+  // Getting regression coefficients 
+  def getCoefficients = this.modelCoefficients
   
 }
