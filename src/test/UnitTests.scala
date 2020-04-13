@@ -113,5 +113,12 @@ class UnitTest extends FlatSpec {
     
   }
   
+  "Predictions made with regression model estimated from CSV2" should "be close enough to test values (threshold 0.000000001)" in { 
+    assertCloseEnoughDV(s"The prediction result should be $yCSV2.", model.predict(xCSV2, model.getCoefficients), yCSV2,0.000000001)
+    
+  }
+  
+  
+  
   
 }
