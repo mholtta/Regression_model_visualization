@@ -38,7 +38,9 @@ object GuiProgramThree {
 
 object GUI extends SimpleSwingApplication {
   
-  def choosePlainFile(title: String = ""): Option[File] = {  
+  
+  // Helper method for displaying filechooser
+  private def choosePlainFile(title: String = ""): Option[File] = {  
     val chooser = new FileChooser(new File("."))
     chooser.title = title
     val result = chooser.showOpenDialog(null)
@@ -48,6 +50,25 @@ object GUI extends SimpleSwingApplication {
     } else None
   }
   
+  // Helper method for updating graph after file chosen
+  private def datasetUpdate(file: Option[File], scatterData: DefaultXYDataset, lineData: DefaultXYDataset) = {
+    for(content <- file) {
+      val data = new Data(content.getCanonicalPath)
+      data.loadFile()
+      
+      for(i <- data.getData) {
+        val model = new RegressionModel(i,2)
+        val xScatter = i(::,0).toArray
+        val yScatter = i(::,1).toArray
+        val xLine = model.getPredictions(::,0).toArray
+        val yLine = model.getPredictions(::,1).toArray
+        
+        scatterData.addSeries("Original data", Array(xScatter,yScatter))
+        lineData.addSeries("Fitted model", Array(xLine,yLine))
+        
+      }
+    }
+  }
   
   
   
@@ -78,7 +99,7 @@ object GUI extends SimpleSwingApplication {
     
     listenTo(loadData)
     reactions += {
-      case ButtonClicked(b) if b == loadData => choosePlainFile()
+      case ButtonClicked(b) if b == loadData => datasetUpdate(choosePlainFile(), collection1, collection2)
     }
     
     
@@ -126,7 +147,7 @@ object GUI extends SimpleSwingApplication {
     // Create the scatter data, renderer, and axis
     val collection1 = new DefaultXYDataset
     
-    collection1.addSeries("Series 1", Array(x,y))
+    //collection1.addSeries("Series 1", Array(x,y))
     val renderer1 = new XYLineAndShapeRenderer(false, true) // Shapes only
     val domain1 = new NumberAxis("Domain1")
     val range1 = new NumberAxis("Range1")
@@ -147,7 +168,7 @@ object GUI extends SimpleSwingApplication {
 
     // Create the line data, renderer, and axis
     val collection2 = new DefaultXYDataset
-    collection2.addSeries("Series 2", Array(xPred,yPred))
+    //collection2.addSeries("Series 2", Array(xPred,yPred))
     
     val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
     val domain2 = new NumberAxis("Domain2")
