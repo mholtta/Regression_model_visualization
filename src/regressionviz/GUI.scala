@@ -17,26 +17,6 @@ import java.text.NumberFormat
 import java.io.File
 
 
-/*
-class UI extends MainFrame {
-  title = "GUI Program #3"
-  contents = new BoxPanel(Orientation.Vertical) {
-    contents += new Label("Look at me!")
-    contents += Button("Press me, please") { println("Thank you") }
-    contents += Button("Close") { sys.exit(0) }
-  }
-}
-
-
-object GuiProgramThree {
-  def main(args: Array[String]) {
-    val ui = new UI
-    ui.visible = true
-  }
-}
-
-*/
-
 
 
 object GUI extends SimpleSwingApplication {
@@ -99,8 +79,7 @@ object GUI extends SimpleSwingApplication {
     
     */
     
-    // Creating a Box on left hand side of the window
-    //val box = new BoxPanel(Orientation.Vertical)
+
     
     
     // Creating buttons to add to box
@@ -160,8 +139,7 @@ object GUI extends SimpleSwingApplication {
     val xMin = new TextField(10)
     val xMax = new TextField(10) 
 
-    
-    //xMin.peer.getDocument.addDocumentListener(arg0)
+
     
     
     val xLimits = new FlowPanel()
@@ -174,28 +152,6 @@ object GUI extends SimpleSwingApplication {
     yLimits.contents += yMin
     yLimits.contents += yMax
     
-    
-    
-    /*
-    val graph = new TextArea(25,45)
-    graph.text = "Placeholder, graph will replace this"
-    */
-    
-    
-    // Data for plot
-    
-    /*
-    var data = new Data("Test2_third_power.csv")
-    data.loadFile()
-    val x = data.getData.get(::,0).toArray
-    val y = data.getData.get(::,1).toArray
-    
-    val regressionModel = new RegressionModel(data.getData.get,3)
-    val predictions = regressionModel.getPredictions
-    
-    val xPred = predictions(::,0).toArray
-    val yPred = predictions(::,1).toArray
-    */
     
     // Generating plot
     val plot = new XYPlot()
@@ -210,9 +166,6 @@ object GUI extends SimpleSwingApplication {
     val domain1 = new NumberAxis("Domain1")
     val range1 = new NumberAxis("Range1")
     
-    // Axis min and max value
-    //domain1.setLowerBound(-1.9)
-    //domain1.setUpperBound(1.0)
     
     // Setting upper and lower bounds to textfields
     xMin.text = domain1.getLowerBound.toString()
@@ -237,17 +190,14 @@ object GUI extends SimpleSwingApplication {
 
     // Create the line data, renderer, and axis
     val collection2 = new DefaultXYDataset
-    //collection2.addSeries("Series 2", Array(xPred,yPred))
+
     
     val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
-    val domain2 = new NumberAxis("Domain2")
-    val range2 = new NumberAxis("Range2")
     
     // Set the line data, renderer, and axis into plot
     plot.setDataset(1, collection2);
     plot.setRenderer(1, renderer2);
-    //plot.setDomainAxis(1, domain2) // Creates second axis, which not needed
-    //plot.setRangeAxis(1, range2) // Creates second axis which not needed
+
     
     // Map the line to the second Domain and second Range
     plot.mapDatasetToDomainAxis(1, 0);
@@ -296,28 +246,7 @@ object GUI extends SimpleSwingApplication {
     }
     
     
-    /*
-    // Adding contents to box
-    box.contents += loadData
-    box.contents += Swing.VStrut(10)
-    box.contents += help
-    box.contents += Swing.VStrut(50)
-    box.contents += Swing.Glue
-    box.contents += new Label("Select regression model")
-    box.contents += Swing.VStrut(10)
-    box.contents += new FlowPanel {
-      contents += modelSelector
-      
-    }
-    
-    box.contents += new Label("Set x-min and x-max")
-    box.contents += Swing.VStrut(10)
-    box.contents += xLimits
-    box.contents += new Label("Set y-min and y-max")
-    box.contents += Swing.VStrut(10)
-    box.contents += yLimits
-    box.border = Swing.EmptyBorder(10, 10, 10, 10)
-    */
+
     
     visible = true
     
@@ -327,29 +256,5 @@ object GUI extends SimpleSwingApplication {
   
   
   
-}
-
-
-class NumberField(initialValue: Double) extends TextField(initialValue.toString) {
-  // Note: exponents are not allowed
-  val numberFormatException = new NumberFormatException
-  listenTo(keys)
-  reactions += {
-    case event: KeyTyped => {
-      try {
-        // Don't allow "d" or "f" in the string even though it parses, e.g. 3.5d
-        if (event.char.isLetter)
-          throw numberFormatException
-        // Don't allow string that doesn't parse to a double
-        (text.substring(0, caret.position) +
-          event.char +
-          text.substring(caret.position)).toDouble
-      } catch {
-        case exception: NumberFormatException => event.consume
-      }
-    }
-  }
-
-  def value : Double = text.toDouble
 }
 
