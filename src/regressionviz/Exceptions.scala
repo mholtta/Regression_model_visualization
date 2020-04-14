@@ -1,3 +1,9 @@
 package regressionviz
 
+/*
+ * Scala file for collecting all custom exceptions
+ */
+
 class DataNotFound extends Exception
+
+class NegativeValue extends Exception

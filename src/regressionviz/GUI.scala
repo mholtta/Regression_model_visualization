@@ -3,6 +3,8 @@ package regressionviz
 import scala.swing._
 import scala.swing.event.{ButtonClicked, SelectionChanged, ValueChanged}
 
+import breeze.linalg.DenseMatrix
+
 
 import java.awt.Insets
 
@@ -38,7 +40,7 @@ object GUI extends SimpleSwingApplication {
   
   // Helper method for updating graph after file chosen
   private def datasetUpdate(file: Option[File], scatterData: DefaultXYDataset, lineData: DefaultXYDataset,xAxis: NumberAxis, yAxis: NumberAxis, xMin: TextField,
-      xMax: TextField, yMin: TextField, yMax: TextField) : Option[Data] = {
+      xMax: TextField, yMin: TextField, yMax: TextField) : Option[DenseMatrix[Double]] = {
     for(content <- file) {
       val data = new Data(content.getCanonicalPath)
       data.loadFile()
@@ -58,7 +60,7 @@ object GUI extends SimpleSwingApplication {
         yMin.text = yAxis.getLowerBound.toString()
         yMax.text = yAxis.getUpperBound.toString()
         
-        return Some(data)
+        return Some(i)
       }
     }
     return None
@@ -85,7 +87,7 @@ object GUI extends SimpleSwingApplication {
     
 
     // A variable storing the data instance currently in use
-    var data : Option[Data] = None
+    var data : Option[DenseMatrix[Double]] = None
     
     
     // Creating buttons to add to box
@@ -118,9 +120,24 @@ object GUI extends SimpleSwingApplication {
       case ButtonClicked(b) if b == updatePolynomial=> {
         try{
           if(data.isEmpty) {
-            throw new DataNotFound 
-          }
+            throw new DataNotFound
+           } else {
+             val degree = modelSelector.peer.getText.toInt
+             // If negative, throw and exception
+             if(degree < 0) throw new NegativeValue
+             
+             val model = new RegressionModel(data.get, degree)
+             val xLine = model.getPredictions(::,0).toArray
+             val yLine = model.getPredictions(::,1).toArray
+             
+             collection2.addSeries("Fitted model", Array(xLine,yLine))
+           }
+        } catch {
+            case e: DataNotFound => Dialog.showMessage(contents.head, "Please load data first.", title="Error")
+            case e: NegativeValue => Dialog.showMessage(contents.head, "Please check input, only positive values allowed.", title="Error")
+            case e: NumberFormatException => Dialog.showMessage(contents.head, "Please check input, only positive integers allowed.", title="Error")
         }
+        
       }
     }
     
@@ -257,15 +274,16 @@ object GUI extends SimpleSwingApplication {
   
       add(loadData, constraints(0,0))
       add(help,constraints(0,1))
-      add(new Label("Set degree of polynomial"), constraints(0,2, inset = new Insets(100,10,0,0)))
-      add(modelPanel, constraints(0,3))
-      add(updateEndpoints, constraints(0,4))
-      add(resetEndpoints, constraints(0,5))
-      add(new Label("Set x-min and x-max"), constraints(0,6))
-      add(xLimits, constraints(0,7))
-      add(new Label("Set y-min and y-max"), constraints(0,8))
-      add(yLimits, constraints(0,9))
-      add(slider, constraints(0,10))
+      add(updatePolynomial, constraints(0,2))
+      add(new Label("Set degree of polynomial"), constraints(0,3, inset = new Insets(100,10,0,0)))
+      add(modelPanel, constraints(0,4))
+      add(updateEndpoints, constraints(0,5))
+      add(resetEndpoints, constraints(0,6))
+      add(new Label("Set x-min and x-max"), constraints(0,7))
+      add(xLimits, constraints(0,8))
+      add(new Label("Set y-min and y-max"), constraints(0,9))
+      add(yLimits, constraints(0,10))
+      add(slider, constraints(0,11))
       add(wrappedChart,constraints(1,0, gridheight = 8))
       
     }
