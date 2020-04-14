@@ -123,11 +123,17 @@ object GUI extends SimpleSwingApplication {
     yLimits.contents += yMin
     yLimits.contents += yMax
     
+    xMin.peer
+    
+    /*
     val graph = new TextArea(25,45)
     graph.text = "Placeholder, graph will replace this"
+    */
     
     
     // Data for plot
+    
+    /*
     var data = new Data("Test2_third_power.csv")
     data.loadFile()
     val x = data.getData.get(::,0).toArray
@@ -138,6 +144,7 @@ object GUI extends SimpleSwingApplication {
     
     val xPred = predictions(::,0).toArray
     val yPred = predictions(::,1).toArray
+    */
     
     // Generating plot
     val plot = new XYPlot()
@@ -151,6 +158,13 @@ object GUI extends SimpleSwingApplication {
     val renderer1 = new XYLineAndShapeRenderer(false, true) // Shapes only
     val domain1 = new NumberAxis("Domain1")
     val range1 = new NumberAxis("Range1")
+    
+    // Axis min and max value
+    //domain1.setLowerBound(-1.9)
+    //domain1.setUpperBound(1.0)
+    domain1.getLowerBound
+    domain1.getUpperBound
+    
     
     // Set the scatter data, renderer, and axis into plot
     plot.setDataset(0, collection1);
