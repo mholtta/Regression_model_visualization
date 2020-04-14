@@ -1,7 +1,7 @@
 package regressionviz
 
 import scala.swing._
-import scala.swing.event.{ButtonClicked, KeyTyped}
+import scala.swing.event.{ButtonClicked, SelectionChanged, ValueChanged}
 
 
 import java.awt.Insets
@@ -15,6 +15,9 @@ import org.jfree.chart._
 import java.text.NumberFormat
 
 import java.io.File
+
+import java.awt.Event._
+
 
 
 
@@ -41,7 +44,7 @@ object GUI extends SimpleSwingApplication {
       data.loadFile()
       
       for(i <- data.getData) {
-        val model = new RegressionModel(i,2)
+        val model = new RegressionModel(i,3)
         val xScatter = i(::,0).toArray
         val yScatter = i(::,1).toArray
         val xLine = model.getPredictions(::,0).toArray
@@ -99,13 +102,34 @@ object GUI extends SimpleSwingApplication {
     val help = new Button("Help")
     help.border = Swing.BeveledBorder(Swing.Raised)
     
-    // Creating combo box for selecting regression model
-    val modelSelector = new ComboBox(Seq("Model 1","Model 2"))
+
+    
+    // Creating a text field for entering degree of polynomial
+    val modelSelector = new TextField(5)
+    modelSelector.text = "1"
+    val modelPanel = new FlowPanel()
+    modelPanel.contents += modelSelector
+    
+    
+    // A button for updating polynomial degree, adding listener and reactions to it 
+    val updatePolynomial = new Button("Update polynomial degree")
+    listenTo(updatePolynomial)
+    reactions += {
+      case ButtonClicked(b) if b == updatePolynomial=> {
+        try{
+          if(data.isEmpty) {
+            throw new DataNotFound 
+          }
+        }
+      }
+    }
+    
+    
     
     // Creating button that updates axis endpoints
     val updateEndpoints = new Button("Update axis endpoints")
     
-    // Adding a listener that changes 
+    // Adding a listener that changes endpoints
     listenTo(updateEndpoints)
     reactions += {
       case ButtonClicked(b) if b == updateEndpoints => {
@@ -233,8 +257,8 @@ object GUI extends SimpleSwingApplication {
   
       add(loadData, constraints(0,0))
       add(help,constraints(0,1))
-      add(new Label("Select regression model"), constraints(0,2, inset = new Insets(100,10,0,0)))
-      add(modelSelector, constraints(0,3))
+      add(new Label("Set degree of polynomial"), constraints(0,2, inset = new Insets(100,10,0,0)))
+      add(modelPanel, constraints(0,3))
       add(updateEndpoints, constraints(0,4))
       add(resetEndpoints, constraints(0,5))
       add(new Label("Set x-min and x-max"), constraints(0,6))

@@ -1,0 +1,3 @@
+package regressionviz
+
+class DataNotFound extends Exception
