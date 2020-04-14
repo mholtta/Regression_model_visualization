@@ -118,13 +118,15 @@ object GUI extends SimpleSwingApplication {
     
     // Creating a text field for entering degree of polynomial
     val modelSelector = new TextField(5)
+    modelSelector.border = Swing.BeveledBorder(Swing.Raised)
     modelSelector.text = "1"
     val modelPanel = new FlowPanel()
     modelPanel.contents += modelSelector
     
     
     // A button for updating polynomial degree, adding listener and reactions to it 
-    val updatePolynomial = new Button("Update polynomial degree")
+    val updatePolynomial = new Button("Update degree of polynomial")
+    updatePolynomial.border = Swing.BeveledBorder(Swing.Raised)
     listenTo(updatePolynomial)
     reactions += {
       case ButtonClicked(b) if b == updatePolynomial=> {
@@ -155,6 +157,7 @@ object GUI extends SimpleSwingApplication {
     
     // Creating button that updates axis endpoints
     val updateEndpoints = new Button("Update axis endpoints")
+    updateEndpoints.border = Swing.BeveledBorder(Swing.Raised)
     
     // Adding a listener that changes endpoints
     listenTo(updateEndpoints)
@@ -175,6 +178,7 @@ object GUI extends SimpleSwingApplication {
     
     // Adding another button that allows returning to default axis endpoints and a listener for it
     val resetEndpoints = new Button("Reset axis endpoints")
+    resetEndpoints.border = Swing.BeveledBorder(Swing.Raised)
     listenTo(resetEndpoints)
     
     reactions += {
@@ -262,8 +266,6 @@ object GUI extends SimpleSwingApplication {
     val wrappedChart = Component.wrap(new ChartPanel(chart))
     
     
-    val slider = new Slider()
-    
     // Combining all items to GridBagPanel
     val panel = new GridBagPanel {
       def constraints(x: Int, y: Int, gridwidth: Int = 1, gridheight: Int = 1,
@@ -284,17 +286,16 @@ object GUI extends SimpleSwingApplication {
   
       add(loadData, constraints(0,0))
       add(help,constraints(0,1))
-      add(updatePolynomial, constraints(0,2))
-      add(new Label("Set degree of polynomial"), constraints(0,3, inset = new Insets(100,10,0,0)))
+      add(updatePolynomial, constraints(0,2, inset = new Insets(100,10,0,10)))
+      add(new Label("Set degree of polynomial"), constraints(0,3))
       add(modelPanel, constraints(0,4))
-      add(updateEndpoints, constraints(0,5))
+      add(updateEndpoints, constraints(0,5, inset = new Insets(50,10,0,10)))
       add(resetEndpoints, constraints(0,6))
       add(new Label("Set x-min and x-max"), constraints(0,7))
       add(xLimits, constraints(0,8))
       add(new Label("Set y-min and y-max"), constraints(0,9))
       add(yLimits, constraints(0,10))
-      add(slider, constraints(0,11))
-      add(wrappedChart,constraints(1,0, gridheight = 8))
+      add(wrappedChart,constraints(1,0, gridheight = 11))
       
     }
     
