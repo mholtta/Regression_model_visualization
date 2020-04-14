@@ -1,7 +1,8 @@
 package regressionviz
 
 import scala.swing._
-import scala.swing.event.ButtonClicked
+import scala.swing.event.{ButtonClicked, KeyTyped}
+
 
 import java.awt.Insets
 
@@ -10,6 +11,8 @@ import org.jfree.data.xy._
 import org.jfree.chart.renderer.xy._
 import org.jfree.chart.axis._
 import org.jfree.chart._
+
+import java.text.NumberFormat
 
 import java.io.File
 
@@ -104,6 +107,7 @@ object GUI extends SimpleSwingApplication {
     val loadData = new Button("Load data")
     loadData.border = Swing.BeveledBorder(Swing.Raised)
     
+    
     listenTo(loadData)
     reactions += {
       case ButtonClicked(b) if b == loadData => datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
@@ -116,9 +120,49 @@ object GUI extends SimpleSwingApplication {
     // Creating combo box for selecting regression model
     val modelSelector = new ComboBox(Seq("Model 1","Model 2"))
     
+    // Creating button that updates axis endpoints
+    val updateEndpoints = new Button("Update axis endpoints")
+    
+    // Adding a listener that changes 
+    listenTo(updateEndpoints)
+    reactions += {
+      case ButtonClicked(b) if b == updateEndpoints => {
+        try{
+            domain1.setLowerBound(xMin.peer.getText.toDouble)
+            domain1.setUpperBound(xMax.peer.getText.toDouble)
+            
+            range1.setLowerBound(yMin.peer.getText.toDouble)
+            range1.setUpperBound(yMax.peer.getText.toDouble)
+            
+        } catch {
+          case e: NumberFormatException => Dialog.showMessage(contents.head, "Please check your axis endpoints input. Only numerical values allowed. Please use '.' as decimal separator. ", title="Error")
+        }
+      }
+    }
+    
+    // Adding another button that allows returning to default axis endpoints and a listener for it
+    val resetEndpoints = new Button("Reset axis endpoints")
+    listenTo(resetEndpoints)
+    
+    reactions += {
+      case ButtonClicked(b) if b == resetEndpoints => {
+        domain1.setAutoRange(true)
+        range1.setAutoRange(true)
+      }
+    }
+    
+    
+    
+    val test = NumberFormat.getInstance()
+    val xMinTest = new FormattedTextField(test)
+    
     // Creating input fields for x and y min and max
     val xMin = new TextField(10)
-    val xMax = new TextField(10)
+    val xMax = new TextField(10) 
+
+    
+    //xMin.peer.getDocument.addDocumentListener(arg0)
+    
     
     val xLimits = new FlowPanel()
     xLimits.contents += xMin
@@ -216,6 +260,7 @@ object GUI extends SimpleSwingApplication {
     val wrappedChart = Component.wrap(new ChartPanel(chart))
     
     
+    val slider = new Slider()
     
     // Combining all items to GridBagPanel
     val panel = new GridBagPanel {
@@ -239,10 +284,13 @@ object GUI extends SimpleSwingApplication {
       add(help,constraints(0,1))
       add(new Label("Select regression model"), constraints(0,2, inset = new Insets(100,10,0,0)))
       add(modelSelector, constraints(0,3))
-      add(new Label("Set x-min and x-max"), constraints(0,4))
-      add(xLimits, constraints(0,5))
-      add(new Label("Set y-min and y-max"), constraints(0,6))
-      add(yLimits, constraints(0,7))
+      add(updateEndpoints, constraints(0,4))
+      add(resetEndpoints, constraints(0,5))
+      add(new Label("Set x-min and x-max"), constraints(0,6))
+      add(xLimits, constraints(0,7))
+      add(new Label("Set y-min and y-max"), constraints(0,8))
+      add(yLimits, constraints(0,9))
+      add(slider, constraints(0,10))
       add(wrappedChart,constraints(1,0, gridheight = 8))
       
     }
@@ -279,5 +327,29 @@ object GUI extends SimpleSwingApplication {
   
   
   
+}
+
+
+class NumberField(initialValue: Double) extends TextField(initialValue.toString) {
+  // Note: exponents are not allowed
+  val numberFormatException = new NumberFormatException
+  listenTo(keys)
+  reactions += {
+    case event: KeyTyped => {
+      try {
+        // Don't allow "d" or "f" in the string even though it parses, e.g. 3.5d
+        if (event.char.isLetter)
+          throw numberFormatException
+        // Don't allow string that doesn't parse to a double
+        (text.substring(0, caret.position) +
+          event.char +
+          text.substring(caret.position)).toDouble
+      } catch {
+        case exception: NumberFormatException => event.consume
+      }
+    }
+  }
+
+  def value : Double = text.toDouble
 }
 
