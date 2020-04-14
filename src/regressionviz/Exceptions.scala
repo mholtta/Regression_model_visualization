@@ -7,3 +7,7 @@ package regressionviz
 class DataNotFound extends Exception
 
 class NegativeValue extends Exception
+
+class UnknownFileType extends Exception
+
+class FileFormatError extends Exception

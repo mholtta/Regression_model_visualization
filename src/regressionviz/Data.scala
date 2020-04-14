@@ -22,6 +22,8 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
       this.storedData = data
       
       
+    } else {
+      throw new UnknownFileType
     }
     
     
@@ -48,8 +50,8 @@ class Data (val file: String = "/m/home/home3/38/holttam2/unix/Studio2Workspace/
     
     val sameWidth = content.forall(_.size == width)
     
-    if( !sameWidth || lenght == 0 || width == 0) {
-      // TODO raise some exception
+    if( !sameWidth || lenght == 0 || width != 2) {
+      throw new FileFormatError
     }
     
     // Creating DenseMatrix, needs to be transposed in the end

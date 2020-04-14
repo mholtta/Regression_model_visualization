@@ -47,7 +47,7 @@ object GUI extends SimpleSwingApplication {
       
       for(i <- data.getData) {
         // Creating new model and updating datasets and axis endpoints
-        val model = new RegressionModel(i,3)
+        val model = new RegressionModel(i,1)
         val xScatter = i(::,0).toArray
         val yScatter = i(::,1).toArray
         val xLine = model.getPredictions(::,0).toArray
@@ -107,7 +107,16 @@ object GUI extends SimpleSwingApplication {
     
     listenTo(loadData)
     reactions += {
-      case ButtonClicked(b) if b == loadData => data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
+      case ButtonClicked(b) if b == loadData => {
+        try {
+          data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
+        } catch {
+          case e: UnknownFileType => Dialog.showMessage(contents.head, "Unkown file type, currently only CSV-files supported.", title="Error")
+          case e: FileFormatError => Dialog.showMessage(contents.head, "Error in file format. Please check that there is data in the file, each row has two columns and separator is ';'.", title="Error")
+          case e: NumberFormatException => Dialog.showMessage(contents.head, "Error in file format. Please check that there are only numerical values, '.' is decimal separator and ';' separates the columns.", title="Error")
+        }
+        
+      }
     }
     
     
