@@ -51,7 +51,8 @@ object GUI extends SimpleSwingApplication {
   }
   
   // Helper method for updating graph after file chosen
-  private def datasetUpdate(file: Option[File], scatterData: DefaultXYDataset, lineData: DefaultXYDataset) = {
+  private def datasetUpdate(file: Option[File], scatterData: DefaultXYDataset, lineData: DefaultXYDataset,xAxis: NumberAxis, yAxis: NumberAxis, xMin: TextField,
+      xMax: TextField, yMin: TextField, yMax: TextField) = {
     for(content <- file) {
       val data = new Data(content.getCanonicalPath)
       data.loadFile()
@@ -65,6 +66,12 @@ object GUI extends SimpleSwingApplication {
         
         scatterData.addSeries("Original data", Array(xScatter,yScatter))
         lineData.addSeries("Fitted model", Array(xLine,yLine))
+        
+        xMin.text = xAxis.getLowerBound.toString()
+        xMax.text = xAxis.getUpperBound.toString()
+        yMin.text = yAxis.getLowerBound.toString()
+        yMax.text = yAxis.getUpperBound.toString()
+        
         
       }
     }
@@ -99,7 +106,7 @@ object GUI extends SimpleSwingApplication {
     
     listenTo(loadData)
     reactions += {
-      case ButtonClicked(b) if b == loadData => datasetUpdate(choosePlainFile(), collection1, collection2)
+      case ButtonClicked(b) if b == loadData => datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
     }
     
     
@@ -110,20 +117,20 @@ object GUI extends SimpleSwingApplication {
     val modelSelector = new ComboBox(Seq("Model 1","Model 2"))
     
     // Creating input fields for x and y min and max
-    val xMin = new TextField(5)
-    val xMax = new TextField(5)
+    val xMin = new TextField(10)
+    val xMax = new TextField(10)
     
     val xLimits = new FlowPanel()
     xLimits.contents += xMin
     xLimits.contents += xMax
     
     val yLimits = new FlowPanel()
-    val yMin = new TextField(5)
-    val yMax = new TextField(5)
+    val yMin = new TextField(10)
+    val yMax = new TextField(10)
     yLimits.contents += yMin
     yLimits.contents += yMax
     
-    xMin.peer
+    
     
     /*
     val graph = new TextArea(25,45)
@@ -162,8 +169,12 @@ object GUI extends SimpleSwingApplication {
     // Axis min and max value
     //domain1.setLowerBound(-1.9)
     //domain1.setUpperBound(1.0)
-    domain1.getLowerBound
-    domain1.getUpperBound
+    
+    // Setting upper and lower bounds to textfields
+    xMin.text = domain1.getLowerBound.toString()
+    xMax.text = domain1.getUpperBound.toString()
+    yMin.text = range1.getLowerBound.toString()
+    yMax.text = range1.getUpperBound.toString()
     
     
     // Set the scatter data, renderer, and axis into plot
