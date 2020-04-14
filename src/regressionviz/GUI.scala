@@ -46,6 +46,7 @@ object GUI extends SimpleSwingApplication {
       data.loadFile()
       
       for(i <- data.getData) {
+        // Creating new model and updating datasets and axis endpoints
         val model = new RegressionModel(i,3)
         val xScatter = i(::,0).toArray
         val yScatter = i(::,1).toArray
@@ -59,6 +60,15 @@ object GUI extends SimpleSwingApplication {
         xMax.text = xAxis.getUpperBound.toString()
         yMin.text = yAxis.getLowerBound.toString()
         yMax.text = yAxis.getUpperBound.toString()
+        
+        // Updating axis labels
+        for(value <- data.getHeader){
+          val xLabel = if(value.isDefinedAt(0)) value(0) else "X"
+          val yLabel = if(value.isDefinedAt(1)) value(1) else "Y"
+          
+          xAxis.setLabel(xLabel)
+          yAxis.setLabel(yLabel)
+        }
         
         return Some(i)
       }
@@ -205,8 +215,8 @@ object GUI extends SimpleSwingApplication {
     
     //collection1.addSeries("Series 1", Array(x,y))
     val renderer1 = new XYLineAndShapeRenderer(false, true) // Shapes only
-    val domain1 = new NumberAxis("Domain1")
-    val range1 = new NumberAxis("Range1")
+    val domain1 = new NumberAxis("X")
+    val range1 = new NumberAxis("Y")
     
     
     // Setting upper and lower bounds to textfields
