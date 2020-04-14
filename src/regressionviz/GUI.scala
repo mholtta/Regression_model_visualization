@@ -35,7 +35,7 @@ object GUI extends SimpleSwingApplication {
   
   // Helper method for updating graph after file chosen
   private def datasetUpdate(file: Option[File], scatterData: DefaultXYDataset, lineData: DefaultXYDataset,xAxis: NumberAxis, yAxis: NumberAxis, xMin: TextField,
-      xMax: TextField, yMin: TextField, yMax: TextField) = {
+      xMax: TextField, yMin: TextField, yMax: TextField) : Option[Data] = {
     for(content <- file) {
       val data = new Data(content.getCanonicalPath)
       data.loadFile()
@@ -55,9 +55,10 @@ object GUI extends SimpleSwingApplication {
         yMin.text = yAxis.getLowerBound.toString()
         yMax.text = yAxis.getUpperBound.toString()
         
-        
+        return Some(data)
       }
     }
+    return None
   }
   
   
@@ -80,6 +81,8 @@ object GUI extends SimpleSwingApplication {
     */
     
 
+    // A variable storing the data instance currently in use
+    var data : Option[Data] = None
     
     
     // Creating buttons to add to box
@@ -89,7 +92,7 @@ object GUI extends SimpleSwingApplication {
     
     listenTo(loadData)
     reactions += {
-      case ButtonClicked(b) if b == loadData => datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
+      case ButtonClicked(b) if b == loadData => data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
     }
     
     
@@ -131,9 +134,7 @@ object GUI extends SimpleSwingApplication {
     }
     
     
-    
-    val test = NumberFormat.getInstance()
-    val xMinTest = new FormattedTextField(test)
+
     
     // Creating input fields for x and y min and max
     val xMin = new TextField(10)
