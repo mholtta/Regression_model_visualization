@@ -1,5 +1,0 @@
-package regressionviz
-
-class Chart {
-  
-}
