@@ -33,14 +33,13 @@ object GUI extends SimpleSwingApplication {
     chooser.title = title
     val result = chooser.showOpenDialog(null)
     if (result == FileChooser.Result.Approve) {
-      println("Approve -- " + chooser.selectedFile)
       Some(chooser.selectedFile)
     } else None
   }
   
   // Helper method for updating graph after file chosen
   private def datasetUpdate(file: Option[File], scatterData: DefaultXYDataset, lineData: DefaultXYDataset,xAxis: NumberAxis, yAxis: NumberAxis, xMin: TextField,
-      xMax: TextField, yMin: TextField, yMax: TextField) : Option[DenseMatrix[Double]] = {
+      xMax: TextField, yMin: TextField, yMax: TextField, polynomial: TextField) : Option[DenseMatrix[Double]] = {
     for(content <- file) {
       val data = new Data(content.getCanonicalPath)
       data.loadFile()
@@ -65,6 +64,7 @@ object GUI extends SimpleSwingApplication {
         xMax.text = xAxis.getUpperBound.toString()
         yMin.text = yAxis.getLowerBound.toString()
         yMax.text = yAxis.getUpperBound.toString()
+        polynomial.text = "1"
         
         // Updating axis labels
         for(value <- data.getHeader){
@@ -100,7 +100,7 @@ object GUI extends SimpleSwingApplication {
     reactions += {
       case ButtonClicked(b) if b == loadData => {
         try {
-          data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
+          data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax, modelSelector)
         } catch {
           case e: UnknownFileType => Dialog.showMessage(contents.head, "Unknown file type, currently only CSV-files supported.", title="Error")
           case e: FileFormatError => Dialog.showMessage(contents.head, "Error in file format. Please check that there is data in the file, each row has two columns and separator is ';'.", title="Error")
@@ -128,7 +128,8 @@ object GUI extends SimpleSwingApplication {
          + "The program allows one to set the degree of polynomial fit to data\n"
          + "by inputting a positive integer to text field below 'Set degree of polynomial'\n"
          + "and pressing 'Update degree pf polynomial'.\n"
-         + "Input 0 means a constant, 1 regular linear regression, 2 quadratic regression and so on.\n\n"
+         + "Input 0 means a constant, 1 regular linear regression, 2 quadratic regression and so on.\n"
+         + "The program will by default fit linear regression to data when new data is loaded.\n\n"
          + "In sections 'Set x-min and x-max' and 'Set y-min and y-max' one can set the axis endpoints.\n"
          + "The endpoints are updated after pressing 'Update axis endpoints'.\n"
          + "Pressing 'Reset axis endpoints' allows one to return to default endpoints where original data is visible.\n"
