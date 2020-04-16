@@ -1,7 +1,7 @@
 package regressionviz
 
 import scala.swing._
-import scala.swing.event.{ButtonClicked, SelectionChanged, ValueChanged}
+import scala.swing.event.ButtonClicked
 
 import breeze.linalg.DenseMatrix
 
@@ -14,15 +14,8 @@ import org.jfree.chart.renderer.xy._
 import org.jfree.chart.axis._
 import org.jfree.chart._
 
-import java.text.NumberFormat
-
 import java.io.File
-
 import java.awt.Event._
-
-
-
-
 
 object GUI extends SimpleSwingApplication {
   
@@ -332,16 +325,10 @@ object GUI extends SimpleSwingApplication {
       
     }
     
-    
-
-    
     visible = true
     
     contents = panel
   }
-  
-  
-  
-  
+ 
 }
 
