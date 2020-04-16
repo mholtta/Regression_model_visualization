@@ -56,6 +56,11 @@ object GUI extends SimpleSwingApplication {
         scatterData.addSeries("Original data", Array(xScatter,yScatter))
         lineData.addSeries("Fitted model", Array(xLine,yLine))
         
+        // Resetting axis endpoints
+        xAxis.setAutoRange(true)
+        yAxis.setAutoRange(true)
+        
+        // Updating text fields
         xMin.text = xAxis.getLowerBound.toString()
         xMax.text = xAxis.getUpperBound.toString()
         yMin.text = yAxis.getLowerBound.toString()
@@ -80,30 +85,16 @@ object GUI extends SimpleSwingApplication {
   
   def top = new MainFrame {
     title     = "Regression model visualization"
-    resizable = true
-    
-    /*
-    val width      = 200
-    val height     = 600
-    val fullHeight = 810
-    
-    // The component declares here the minimum, maximum and preferred sizes, which Layout Manager 
-    // possibly can follow when positioning components on the screen.
-    minimumSize   = new Dimension(width,fullHeight)
-    preferredSize = new Dimension(width,fullHeight)
-    maximumSize   = new Dimension(width,fullHeight)
-    
-    */
+    resizable = false
     
 
     // A variable storing the data instance currently in use
     var data : Option[DenseMatrix[Double]] = None
     
     
-    // Creating buttons to add to box
+    // Creating button to open file chooser and load data
     val loadData = new Button("Load data")
     loadData.border = Swing.BeveledBorder(Swing.Raised)
-    
     
     listenTo(loadData)
     reactions += {
@@ -111,7 +102,7 @@ object GUI extends SimpleSwingApplication {
         try {
           data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax)
         } catch {
-          case e: UnknownFileType => Dialog.showMessage(contents.head, "Unkown file type, currently only CSV-files supported.", title="Error")
+          case e: UnknownFileType => Dialog.showMessage(contents.head, "Unknown file type, currently only CSV-files supported.", title="Error")
           case e: FileFormatError => Dialog.showMessage(contents.head, "Error in file format. Please check that there is data in the file, each row has two columns and separator is ';'.", title="Error")
           case e: NumberFormatException => Dialog.showMessage(contents.head, "Error in file format. Please check that there are only numerical values, '.' is decimal separator and ';' separates the columns.", title="Error")
         }
@@ -119,9 +110,30 @@ object GUI extends SimpleSwingApplication {
       }
     }
     
-    
+    // Help button
     val help = new Button("Help")
     help.border = Swing.BeveledBorder(Swing.Raised)
+    
+    // Listener for button and a message
+    listenTo(help)
+    
+    reactions += {
+      case ButtonClicked(b) if b == help => Dialog.showMessage(contents.head, "This program fits a polynomial regression with OLS method to an X-Y dataset stored in a CSV file. \n \n" 
+         + "Use button 'Load data' to select a CSV-file. The file needs to be in following format:\n"
+         + "- two columns, first colum is the independent variable visualized on the horizontal axis, second column is the dependent variable\n"
+         + "- file should have a header row, the header row is shown as axis labels allowing one to check columns were in right order\n"
+         + "- only numerical values are allowed below the header row, no spaces\n"
+         + "- only ';' is allowed as a column separator and '.' as decimal separator \n \n"
+         + "The program should yield hopefully helpful error messages in case not all file criteria is met.\n\n"
+         + "The program allows one to set the degree of polynomial fit to data\n"
+         + "by inputting a positive integer to text field below 'Set degree of polynomial'\n"
+         + "and pressing 'Update degree pf polynomial'.\n"
+         + "Input 0 means a constant, 1 regular linear regression, 2 quadratic regression and so on.\n\n"
+         + "In sections 'Set x-min and x-max' and 'Set y-min and y-max' one can set the axis endpoints.\n"
+         + "The endpoints are updated after pressing 'Update axis endpoints'.\n"
+         + "Pressing 'Reset axis endpoints' allows one to return to default endpoints where original data is visible.\n"
+         + "When new data is loaded, the endpoints are automatically reset.", title="Help")
+    }
     
 
     
@@ -204,8 +216,6 @@ object GUI extends SimpleSwingApplication {
     val xMin = new TextField(10)
     val xMax = new TextField(10) 
 
-
-    
     
     val xLimits = new FlowPanel()
     xLimits.contents += xMin
@@ -220,18 +230,46 @@ object GUI extends SimpleSwingApplication {
     
     // Generating plot
     val plot = new XYPlot()
+ 
+    /*  
+     * 
+     * Setting up line
+     * 
+     * */
+
+    // Create the line data, renderer, and axis
+    val collection2 = new DefaultXYDataset
+
+    
+    val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
+    
+    // Set the line data, renderer, and axis into plot
+    plot.setDataset(0, collection2);
+    plot.setRenderer(0, renderer2);
+
+    
+    // Map the line to the second Domain and second Range
+    plot.mapDatasetToDomainAxis(1, 0);
+    plot.mapDatasetToRangeAxis(1, 0);
+
     
     
-    /* Setting up scatter */
+    
+    /*  
+     *  
+     * Setting up scatter
+     * 
+     * */
     
     // Create the scatter data, renderer, and axis
     val collection1 = new DefaultXYDataset
     
-    //collection1.addSeries("Series 1", Array(x,y))
+    // Generating rendered and axes
     val renderer1 = new XYLineAndShapeRenderer(false, true) // Shapes only
     val domain1 = new NumberAxis("X")
     val range1 = new NumberAxis("Y")
     
+
     
     // Setting upper and lower bounds to textfields
     xMin.text = domain1.getLowerBound.toString()
@@ -241,8 +279,8 @@ object GUI extends SimpleSwingApplication {
     
     
     // Set the scatter data, renderer, and axis into plot
-    plot.setDataset(0, collection1);
-    plot.setRenderer(0, renderer1)
+    plot.setDataset(1, collection1);
+    plot.setRenderer(1, renderer1)
     plot.setDomainAxis(0, domain1)
     plot.setRangeAxis(0, range1)
     
@@ -252,25 +290,9 @@ object GUI extends SimpleSwingApplication {
     
     
     
-    /* Setting up line */
-
-    // Create the line data, renderer, and axis
-    val collection2 = new DefaultXYDataset
-
-    
-    val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
-    
-    // Set the line data, renderer, and axis into plot
-    plot.setDataset(1, collection2);
-    plot.setRenderer(1, renderer2);
-
-    
-    // Map the line to the second Domain and second Range
-    plot.mapDatasetToDomainAxis(1, 0);
-    plot.mapDatasetToRangeAxis(1, 0);
-    
+        
     // Create the chart with the plot and a legend
-    val chart = new JFreeChart("Multi Dataset Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, true)
+    val chart = new JFreeChart("Visualizing polynomial regression data fit", JFreeChart.DEFAULT_TITLE_FONT, plot, true)
     
     // Warpping the chart to scala swing component
     val wrappedChart = Component.wrap(new ChartPanel(chart))
@@ -296,10 +318,10 @@ object GUI extends SimpleSwingApplication {
   
       add(loadData, constraints(0,0))
       add(help,constraints(0,1))
-      add(updatePolynomial, constraints(0,2, inset = new Insets(100,10,0,10)))
+      add(updatePolynomial, constraints(0,2, inset = new Insets(75,10,0,10)))
       add(new Label("Set degree of polynomial"), constraints(0,3))
       add(modelPanel, constraints(0,4))
-      add(updateEndpoints, constraints(0,5, inset = new Insets(50,10,0,10)))
+      add(updateEndpoints, constraints(0,5, inset = new Insets(40,10,0,10)))
       add(resetEndpoints, constraints(0,6))
       add(new Label("Set x-min and x-max"), constraints(0,7))
       add(xLimits, constraints(0,8))
