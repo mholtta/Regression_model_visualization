@@ -222,6 +222,7 @@ object GUI extends SimpleSwingApplication {
     val plot = new XYPlot()
     
     
+    /* Setting up scatter */
     
     // Create the scatter data, renderer, and axis
     val collection1 = new DefaultXYDataset
@@ -251,7 +252,7 @@ object GUI extends SimpleSwingApplication {
     
     
     
-    /* SETUP LINE */
+    /* Setting up line */
 
     // Create the line data, renderer, and axis
     val collection2 = new DefaultXYDataset
