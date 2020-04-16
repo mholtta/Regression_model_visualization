@@ -11,14 +11,7 @@ class UnitTest extends FlatSpec {
   /*
    * Helpermethods for testing.
    */
-  def assertTrue (message: String, valueToCheck: Boolean) = assert(valueToCheck, message)
-  def assertFalse(message: String, valueToCheck: Boolean) = assert(!valueToCheck, message)
-  def assertEquals[T] (message: String, valueA: T, valueB: T) = assert(valueA == valueB, message)
-  def assertNotNone[T] (message: String, valueToCheck: Option[T]) = assert(valueToCheck.isDefined, message)
-  def assertOption[T] (message: String, valueToCheck: Option[T], expectedContents:T) = {
-    assert(valueToCheck.isDefined, message)
-    assert(valueToCheck.get == expectedContents, message)
-  }  
+  
   
   def assertEqualsOptions[T] (message: String, valueA: Option[T], valueB: Option[T]) = {
     
