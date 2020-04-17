@@ -145,6 +145,7 @@ class UnitTest extends FlatSpec {
 
   regressionTestXLSX.loadFile()
   
+  
   "RegressionTestXLSX header and data after loading data" should "match to test values" in { 
     assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", regressionTestXLSX.getHeader, header2)
     assertEqualsOptions(s"The data should be $CSV2matrix before data is loaded into data1 instance.", regressionTestXLSX.getData, Option(CSV2matrix))
