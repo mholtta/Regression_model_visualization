@@ -118,8 +118,8 @@ object GUI extends SimpleSwingApplication {
           case e: UnknownFileType => Dialog.showMessage(contents.head, "Unknown file type, currently only CSV and XLSX -files supported.", title="Error")
           case e: FileFormatError => Dialog.showMessage(contents.head, "Error in file format. Please check that there is data in the file, each row has two columns and separator is ';'.", title="Error")
           case e: NumberFormatException => Dialog.showMessage(contents.head, "Error in file format. Please check that there are only numerical values. For CSV: '.' is decimal separator and ';' separates the columns.", title="Error")
-          case e: XLSXFileMissingData => Dialog.showMessage(contents.head, "Please check that the XLSX file contains data in addition to header row.", title="Error")
-          case e: XLSXFileMissingData => Dialog.showMessage(contents.head, "Please check that the XLSX file contains data in addition to header row.", title="Error")
+          case e: XLSXFileMissingData => Dialog.showMessage(contents.head, "Please check there are no empty cells in columns A or B in rows with data.", title="Error")
+          case e: XLSXNoContent => Dialog.showMessage(contents.head, "Please check that the XLSX file contains data in addition to header row.", title="Error")
         }
         
       }

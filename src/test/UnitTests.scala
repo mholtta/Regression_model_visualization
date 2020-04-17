@@ -51,6 +51,7 @@ class UnitTest extends FlatSpec {
   
   val regressionTest = new Data("Test2_third_power.csv") // For testing regression model class
   val dataXLSX = new Data("Test1.xlsx") // Test data for XLSX loader
+  val regressionTestXLSX = new Data("Test2_third_power.xlsx")
   
   
   /*
@@ -100,7 +101,7 @@ class UnitTest extends FlatSpec {
   regressionTest.loadFile()
   
   "RegressionTest header and data after loading data" should "match to test values" in { 
-    assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", data2.getHeader, header2)
+    assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", regressionTest.getHeader, header2)
     assertEqualsOptions(s"The data should be $CSV2matrix before data is loaded into data1 instance.", regressionTest.getData, Option(CSV2matrix))
   }
   
@@ -138,6 +139,18 @@ class UnitTest extends FlatSpec {
     assertEqualsOptions(s"The data should be $denseMatrix2 after data is loaded into dataXLSX instance.", dataXLSX.getData, denseMatrix2)
   }
   
+  /*
+   * Testing longer data
+   */
+
+  regressionTestXLSX.loadFile()
   
+  "RegressionTestXLSX header and data after loading data" should "match to test values" in { 
+    assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", regressionTestXLSX.getHeader, header2)
+    assertEqualsOptions(s"The data should be $CSV2matrix before data is loaded into data1 instance.", regressionTestXLSX.getData, Option(CSV2matrix))
+  }
+
+  
+
   
 }
