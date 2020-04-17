@@ -45,11 +45,13 @@ class UnitTest extends FlatSpec {
   
   
   /*
-   * Data object.
+   * Data objects.
    */
   val data1 = new Data("Test1.csv") 
   
   val regressionTest = new Data("Test2_third_power.csv") // For testing regression model class
+  val dataXLSX = new Data("Test1.xlsx") // Test data for XLSX loader
+  
   
   /*
    * Target results.
@@ -67,24 +69,34 @@ class UnitTest extends FlatSpec {
   CSV2matrix(::,0) := xCSV2
   CSV2matrix(::,1) := yCSV2
   
-  
+  /*
+   * Test prior to loading data
+   */
   
   
   "Data1 header and data prior to loading data" should "match to test values" in { 
     assertEqualsOptions(s"The header should be $header1Start before data is loaded into data1 instance.", data1.getHeader, header1Start)
     assertEqualsOptions(s"The data should be $denseMatrix1Start before data is loaded into data1 instance.", data1.getData, denseMatrix1Start)
   }
+
+  
+  /*
+   * Test after loading data
+   */
   
   val data2 = new Data("Test1.csv")
   data2.loadFile()
   
  
-  
   "Data2 header and data after loading data" should "match to test values" in { 
     assertEqualsOptions(s"The header should be $header2.get before data is loaded into data1 instance.", data2.getHeader, header2)
     assertEqualsOptions(s"The data should be $denseMatrix2 before data is loaded into data1 instance.", data2.getData, denseMatrix2)
   }  
   
+  /*
+   * Testing longer data
+   */
+
   regressionTest.loadFile()
   
   "RegressionTest header and data after loading data" should "match to test values" in { 
@@ -99,6 +111,9 @@ class UnitTest extends FlatSpec {
   
   val model = new RegressionModel(regressionTest.getData.get,3)
   
+  /*
+   * Testing coefficients and predictions
+   */
   
   
   "Regression model estimated from CSV2" should "be close enough to test values (threshold 0.000000001)" in { 
@@ -111,6 +126,17 @@ class UnitTest extends FlatSpec {
     
   }
   
+  /*
+   * Testing XLSX loader
+   */
+ 
+  dataXLSX.loadFile() 
+  
+    
+  "DataXLSX header and data after loading data" should "match to test values" in { 
+    assertEqualsOptions(s"The header should be $header2.get after data is loaded into dataXLSX instance.", dataXLSX.getHeader, header2)
+    assertEqualsOptions(s"The data should be $denseMatrix2 after data is loaded into dataXLSX instance.", dataXLSX.getData, denseMatrix2)
+  }
   
   
   

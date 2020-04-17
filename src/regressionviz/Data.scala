@@ -56,7 +56,7 @@ class Data (val file: String) {
     // Getting all cell references where row has some content to array of arrays for first two columns
     // Getting also cases where only another cell has data (return blanks as null), wrapping to Option
     val allContentOption = sheet.toArray
-                          .map(row => Array( Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)), Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)) ) )
+                          .map(row => Array( Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)), Option(row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)) ) )
     
     // Checking are there any None's in content and throwing an exception if there are
     if(allContentOption.flatten.exists(_ == None)){
