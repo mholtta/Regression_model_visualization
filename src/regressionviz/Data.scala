@@ -19,7 +19,7 @@ class Data (val file: String) {
   private var dataHeader: Option[Array[String]] = None
   
   
-  // Method calls either loadCSV or loadJSON based on filetype
+  // Method calls either loadCSV or loadXLSX based on filetype
   def loadFile() = {
     // If to select right filetype
     
@@ -29,12 +29,66 @@ class Data (val file: String) {
       this.storedData = data
       
       
+    } else if (file.takeRight(4).toLowerCase() == "xlsx") {
+      val (header, data) = this.loadXLSX(file)
+      this.dataHeader = header
+      this.storedData = data
+            
     } else {
       throw new UnknownFileType
     }
     
     
   }
+  
+  
+  // Helper method for loading XLSX files
+  private def loadXLSX(file: String) = {
+    // Creating file
+    val f = new File(file)
+    // Creating the workbook and loading first sheet from it
+    val workbook = WorkbookFactory.create(f)
+    val sheet = workbook.getSheetAt(0)
+    
+    // Creating a formatter that converts the cell reference to the value
+    val formatter = new DataFormatter()
+    
+    // Getting all cell references where row has some content to array of arrays for first two columns
+    // Getting also cases where only another cell has data (return blanks as null), wrapping to Option
+    val allContentOption = sheet.toArray
+                          .map(row => Array( Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)), Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)) ) )
+    
+    // Checking are there any None's in content and throwing an exception if there are
+    if(allContentOption.flatten.exists(_ == None)){
+      throw new XLSXFileMissingData
+    }
+                          
+    // No None's at this point, safe to remove Options, and get values
+    val allContent = allContentOption.map(_.flatten).map(_.map( x => formatter.formatCellValue(x)))
+    
+    // Getting header
+    val header = allContent.head
+    
+    // Getting data, toDouble may create an exception, 
+    val content = allContent.drop(1)
+                         .map(_.map(_.trim))
+                         .map(_.map(_.toDouble))
+    
+    
+    // Lenght for creating DenseMatrix
+    val lenght = content.size
+    
+    // If file has no content, throw an exception
+    if(lenght == 0) throw new XLSXNoContent
+    
+    // Creating DenseMatrix, needs to be transposed in the end
+    val data = new DenseMatrix(2, lenght, content.flatten)
+    
+    // Returning headers and data in breeze dense matrix
+    (Option(header), Option(data.t))
+    
+  }
+
   
   // Helper method for loading CSV-files
   private def loadCSV(file: String) = {
@@ -76,46 +130,7 @@ class Data (val file: String) {
     (Option(header), Option(data.t))
   }
   
-  private def loadXLSX(file: String) = {
-    // Geeting file
-    val f = new File(file)
-    // Creating the workbook and loading first sheet from it
-    val workbook = WorkbookFactory.create(f)
-    val sheet = workbook.getSheetAt(0)
     
-    // Creating a formatter that converts the cell reference to the value
-    val formatter = new DataFormatter()
-    
-    // Getting all cell references where row has some content to array of arrays for first two columns
-    // Getting also cases where only another cell has data (return blanks as null), wrapping to Option
-    val allContentOption = sheet.toArray
-                          .map(row => Array( Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)), Option(row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)) ) )
-    
-    // Checking are there any None's in content and throwing an exception if there are
-    if(allContentOption.flatten.exists(_ == None)){
-      throw new XLSXFileMissingData
-    }
-                          
-    // No None's at this point, safe to remove Options, and get values
-    val allContent = allContentOption.map(_.flatten).map(_.map( x => formatter.formatCellValue(x)))
-    
-    // Getting header
-    val header = allContent.head
-    
-    // Getting data, toDouble may create an exception, 
-    val content = allContent.drop(1)
-                         .map(_.map(_.trim))
-                         .map(_.map(_.toDouble))
-    
-    
-    // Lenght for creating DenseMatrix
-    val lenght = content.size
-    
-    // If file has no content, throw an exception
-    if(lenght == 0) throw new XLSXNoContent
-    
-  }
-  
 
   
   
