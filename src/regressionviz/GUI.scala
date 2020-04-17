@@ -3,11 +3,13 @@ package regressionviz
 import scala.swing._
 import scala.swing.event.ButtonClicked
 
+// Import for storing data
 import breeze.linalg.DenseMatrix
 
-
+// Import for setting insets in GridBagPanel
 import java.awt.Insets
 
+// Imports for charting
 import org.jfree.chart.plot._
 import org.jfree.data.xy._
 import org.jfree.chart.renderer.xy._
