@@ -19,6 +19,12 @@ import java.awt.Event._
 
 object GUI extends SimpleSwingApplication {
   
+  /*
+   * 
+   * Helper methods for updating GUI
+   * 
+   */
+  
   
   // Helper method for displaying filechooser
   private def choosePlainFile(title: String = ""): Option[File] = {  
@@ -38,13 +44,18 @@ object GUI extends SimpleSwingApplication {
       data.loadFile()
       
       for(i <- data.getData) {
-        // Creating new model and updating datasets and axis endpoints
+        // Creating new model with loaded data
         val model = new RegressionModel(i,1)
+        
+        // Splitting loaded data to x and y for scatter plot
         val xScatter = i(::,0).toArray
         val yScatter = i(::,1).toArray
+        
+        // Splitting predictions to x and y for line
         val xLine = model.getPredictions(::,0).toArray
         val yLine = model.getPredictions(::,1).toArray
         
+        // Updating the dataseries given to function
         scatterData.addSeries("Original data", Array(xScatter,yScatter))
         lineData.addSeries("Fitted model", Array(xLine,yLine))
         
@@ -52,14 +63,14 @@ object GUI extends SimpleSwingApplication {
         xAxis.setAutoRange(true)
         yAxis.setAutoRange(true)
         
-        // Updating text fields
+        // Updating text fields visible in GUI to match new data
         xMin.text = xAxis.getLowerBound.toString()
         xMax.text = xAxis.getUpperBound.toString()
         yMin.text = yAxis.getLowerBound.toString()
         yMax.text = yAxis.getUpperBound.toString()
         polynomial.text = "1"
         
-        // Updating axis labels
+        // Updating axis labels to match file
         for(value <- data.getHeader){
           val xLabel = if(value.isDefinedAt(0)) value(0) else "X"
           val yLabel = if(value.isDefinedAt(1)) value(1) else "Y"
@@ -74,6 +85,11 @@ object GUI extends SimpleSwingApplication {
     return None
   }
   
+  /*
+   * 
+   * Code for GUI
+   * 
+   */
   
   
   def top = new MainFrame {
@@ -93,8 +109,10 @@ object GUI extends SimpleSwingApplication {
     reactions += {
       case ButtonClicked(b) if b == loadData => {
         try {
+          // Running helper function to update data in use and graphs
           data = datasetUpdate(choosePlainFile(), collection1, collection2, domain1, range1, xMin, xMax, yMin, yMax, modelSelector)
         } catch {
+          // Catching exceptions and displaying errors
           case e: UnknownFileType => Dialog.showMessage(contents.head, "Unknown file type, currently only CSV-files supported.", title="Error")
           case e: FileFormatError => Dialog.showMessage(contents.head, "Error in file format. Please check that there is data in the file, each row has two columns and separator is ';'.", title="Error")
           case e: NumberFormatException => Dialog.showMessage(contents.head, "Error in file format. Please check that there are only numerical values, '.' is decimal separator and ';' separates the columns.", title="Error")
@@ -111,6 +129,7 @@ object GUI extends SimpleSwingApplication {
     listenTo(help)
     
     reactions += {
+      // Text behind help button
       case ButtonClicked(b) if b == help => Dialog.showMessage(contents.head, "This program fits a polynomial regression with OLS method to an X-Y dataset stored in a CSV file. \n \n" 
          + "Use button 'Load data' to select a CSV-file. The file needs to be in following format:\n"
          + "- two columns, first colum is the independent variable visualized on the horizontal axis, second column is the dependent variable\n"
@@ -135,6 +154,7 @@ object GUI extends SimpleSwingApplication {
     val modelSelector = new TextField(5)
     modelSelector.border = Swing.BeveledBorder(Swing.Raised)
     modelSelector.text = "1"
+    // Text field to flow panel for consistent look
     val modelPanel = new FlowPanel()
     modelPanel.contents += modelSelector
     
@@ -145,6 +165,7 @@ object GUI extends SimpleSwingApplication {
     listenTo(updatePolynomial)
     reactions += {
       case ButtonClicked(b) if b == updatePolynomial=> {
+        // After update polynomial clicked, try to create a new model, throw exceptions if no data or not an integer value
         try{
           if(data.isEmpty) {
             throw new DataNotFound
@@ -153,13 +174,17 @@ object GUI extends SimpleSwingApplication {
              // If negative, throw and exception
              if(degree < 0) throw new NegativeValue
              
+             // Fit the model with new polynomial degree
              val model = new RegressionModel(data.get, degree)
+             // Separate x and y from predictions matrix
              val xLine = model.getPredictions(::,0).toArray
              val yLine = model.getPredictions(::,1).toArray
              
+             // Update dataset being graphed to update graph
              collection2.addSeries("Fitted model", Array(xLine,yLine))
            }
         } catch {
+            // Show error messages in case of exceptions
             case e: DataNotFound => Dialog.showMessage(contents.head, "Please load data first.", title="Error")
             case e: NegativeValue => Dialog.showMessage(contents.head, "Please check input, only positive values allowed.", title="Error")
             case e: NumberFormatException => Dialog.showMessage(contents.head, "Please check input, only positive integers allowed.", title="Error")
@@ -179,6 +204,7 @@ object GUI extends SimpleSwingApplication {
     reactions += {
       case ButtonClicked(b) if b == updateEndpoints => {
         try{
+            // Setting x and y axis upper and lower bounds
             domain1.setLowerBound(xMin.peer.getText.toDouble)
             domain1.setUpperBound(xMax.peer.getText.toDouble)
             
@@ -186,6 +212,7 @@ object GUI extends SimpleSwingApplication {
             range1.setUpperBound(yMax.peer.getText.toDouble)
             
         } catch {
+          // Catch the exception if string not convertible to int
           case e: NumberFormatException => Dialog.showMessage(contents.head, "Please check your axis endpoints input. Only numerical values allowed. Please use '.' as decimal separator. ", title="Error")
         }
       }
@@ -198,6 +225,7 @@ object GUI extends SimpleSwingApplication {
     
     reactions += {
       case ButtonClicked(b) if b == resetEndpoints => {
+        // Setting auto endpoints for both axes
         domain1.setAutoRange(true)
         range1.setAutoRange(true)
       }
@@ -210,7 +238,7 @@ object GUI extends SimpleSwingApplication {
     val xMin = new TextField(10)
     val xMax = new TextField(10) 
 
-    
+    // Adding input fields to FlowPanel to show them side by side
     val xLimits = new FlowPanel()
     xLimits.contents += xMin
     xLimits.contents += xMax
@@ -227,7 +255,7 @@ object GUI extends SimpleSwingApplication {
  
     /*  
      * 
-     * Setting up line
+     * Setting up line for the chart
      * 
      * */
 
@@ -251,7 +279,7 @@ object GUI extends SimpleSwingApplication {
     
     /*  
      *  
-     * Setting up scatter
+     * Setting up scatter for chart
      * 
      * */
     
@@ -288,12 +316,13 @@ object GUI extends SimpleSwingApplication {
     // Create the chart with the plot and a legend
     val chart = new JFreeChart("Visualizing polynomial regression data fit", JFreeChart.DEFAULT_TITLE_FONT, plot, true)
     
-    // Warpping the chart to scala swing component
+    // Warpping the chart to first Java Swing component and then Scala swing component to allow displaying the chart in Swing UI
     val wrappedChart = Component.wrap(new ChartPanel(chart))
     
     
     // Combining all items to GridBagPanel
     val panel = new GridBagPanel {
+      // Helper function for setting constraints in GridBagPanel
       def constraints(x: Int, y: Int, gridwidth: Int = 1, gridheight: Int = 1,
 		    weightx: Double = 0.0, weighty: Double = 0.0, fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.Horizontal, 
 		    anchor: GridBagPanel.Anchor.Value = GridBagPanel.Anchor.NorthWest, inset: Insets = new Insets(10,10,0,10)) : Constraints = {
@@ -309,7 +338,7 @@ object GUI extends SimpleSwingApplication {
         c.insets = inset
         c
       }
-  
+      // Adding all components to panel
       add(loadData, constraints(0,0))
       add(help,constraints(0,1))
       add(updatePolynomial, constraints(0,2, inset = new Insets(75,10,0,10)))
@@ -327,6 +356,7 @@ object GUI extends SimpleSwingApplication {
     
     visible = true
     
+    // Adding panel to MainFrame contents
     contents = panel
   }
  

@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="breeze_breeze-viz_breeze-natives_1.0_2.12.3.jar"/>
+	<classpathentry kind="lib" path="apache-poi-4.1.2_scala 12.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
