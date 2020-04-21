@@ -238,6 +238,12 @@ object GUI extends SimpleSwingApplication {
         // Setting auto endpoints for both axes
         domain1.setAutoRange(true)
         range1.setAutoRange(true)
+        
+        // Updating text fields visible in GUI to match new data
+        xMin.text = domain1.getLowerBound.toString()
+        xMax.text = domain1.getUpperBound.toString()
+        yMin.text = range1.getLowerBound.toString()
+        yMax.text = range1.getUpperBound.toString()
       }
     }
     
@@ -300,6 +306,10 @@ object GUI extends SimpleSwingApplication {
     val renderer1 = new XYLineAndShapeRenderer(false, true) // Shapes only
     val domain1 = new NumberAxis("X")
     val range1 = new NumberAxis("Y")
+    
+    // Setting auto-range to true in axes
+    domain1.setAutoRange(true)
+    range1.setAutoRange(true)
     
 
     
