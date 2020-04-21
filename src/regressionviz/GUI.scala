@@ -135,12 +135,17 @@ object GUI extends SimpleSwingApplication {
     
     reactions += {
       // Text behind help button
-      case ButtonClicked(b) if b == help => Dialog.showMessage(contents.head, "This program fits a polynomial regression with OLS method to an X-Y dataset stored in a CSV file. \n \n" 
-         + "Use button 'Load data' to select a CSV-file. The file needs to be in following format:\n"
+      case ButtonClicked(b) if b == help => Dialog.showMessage(contents.head, "This program fits a polynomial regression with OLS method to an X-Y dataset stored in a CSV or XLSX -file. \n \n" 
+         + "Use button 'Load data' to select a CSV or XLSX-file. CSV-file needs to be in following format:\n"
          + "- two columns, first colum is the independent variable visualized on the horizontal axis, second column is the dependent variable\n"
          + "- file should have a header row, the header row is shown as axis labels allowing one to check columns were in right order\n"
          + "- only numerical values are allowed below the header row, no spaces\n"
          + "- only ';' is allowed as a column separator and '.' as decimal separator \n \n"
+         + "XLSX-file needs to be in following format:\n"
+         + "- data is stored in the first sheet of the file\n"
+         + "- column A should contain the independent variable visualized on the horizontal axis, column B should contain the dependent variable\n"
+         + "- sheet should have header on the first row\n"
+         + "- header should be in text format and other rows in numerical format \n\n"
          + "The program should yield hopefully helpful error messages in case not all file criteria is met.\n\n"
          + "The program allows one to set the degree of polynomial fit to data\n"
          + "by inputting a positive integer to text field below 'Set degree of polynomial'\n"
