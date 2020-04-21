@@ -203,8 +203,6 @@ object GUI extends SimpleSwingApplication {
       }
     }
     
-    
-    
     // Creating button that updates axis endpoints
     val updateEndpoints = new Button("Update axis endpoints")
     updateEndpoints.border = Swing.BeveledBorder(Swing.Raised)
@@ -246,10 +244,7 @@ object GUI extends SimpleSwingApplication {
         yMax.text = range1.getUpperBound.toString()
       }
     }
-    
-    
 
-    
     // Creating input fields for x and y min and max
     val xMin = new TextField(10)
     val xMax = new TextField(10) 
@@ -282,16 +277,14 @@ object GUI extends SimpleSwingApplication {
     val renderer2 = new XYLineAndShapeRenderer(true, false)	// Lines only
     
     // Set the line data, renderer, and axis into plot
-    plot.setDataset(0, collection2);
-    plot.setRenderer(0, renderer2);
+    plot.setDataset(0, collection2)
+    plot.setRenderer(0, renderer2)
 
     
     // Map the line to the second Domain and second Range
-    plot.mapDatasetToDomainAxis(1, 0);
-    plot.mapDatasetToRangeAxis(1, 0);
+    plot.mapDatasetToDomainAxis(1, 0)
+    plot.mapDatasetToRangeAxis(1, 0)
 
-    
-    
     
     /*  
      *  
@@ -321,7 +314,7 @@ object GUI extends SimpleSwingApplication {
     
     
     // Set the scatter data, renderer, and axis into plot
-    plot.setDataset(1, collection1);
+    plot.setDataset(1, collection1)
     plot.setRenderer(1, renderer1)
     plot.setDomainAxis(0, domain1)
     plot.setRangeAxis(0, range1)
