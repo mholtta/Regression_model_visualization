@@ -17,6 +17,9 @@ The repository is in the Eclipse-format as that was the recommended format for t
 **User interface:**
 ![User interface](https://raw.githubusercontent.com/mholtta/CS-C2120_Programming_studio2-project/master/readMeImages/GUI.png?token=AOTNNCCE5GSVKABSHU7Y7NC7HED7E)
 
+**Help screen:**
+![Help screen](https://raw.githubusercontent.com/mholtta/Regression_model_visualization/master/readMeImages/Help_screen.png)
+
 ### The best sides of the project:
 -	The unit tests cover large part of the application’s functionality (data loading, regression model fitting and obtaining predictions).
 -	The application does not crash from incorrect inputs or user actions, but instead yield meaningful error messages.
