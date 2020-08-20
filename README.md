@@ -1,6 +1,6 @@
 # Regression model visualisation tool
 
-This the course project for CS-C2120 Programming studio 2: Project. In the course we were given a list of projects to choose from. I chose fitting and visualizing a regression model as my topic. The application is simple and could be improved in multiple ways. However, it met all the criteria set in the project brief and earned a grade 5/5 (maximum grade).
+This the course project for CS-C2120 Programming studio 2: Project. I completed the course on 4/2020. In the course we were given a list of projects to choose from. I chose fitting and visualizing a regression model as my topic. The application is simple and could be improved in multiple ways. However, it met all the criteria set in the project brief and earned a grade 5/5 (maximum grade).
 
 **The project brief for completing at advanced level was the following:**
 - Build a program that fits a regression model to a dataset consisting of x,y -pairs and visualises the datapoints and the regression line.
